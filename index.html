@@ -700,6 +700,17 @@
                         </div>
                         <div class="quantity-row">
                             <div class="quantity-info">
+                                <div class="quantity-name">开门</div>
+                                <div class="quantity-price">10元/个（1-4个）</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('openDoor', -1)">−</button>
+                                <span class="quantity-value" id="openDoor">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('openDoor', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
                                 <div class="quantity-name">小R角</div>
                                 <div class="quantity-price">20元/个</div>
                             </div>
@@ -801,6 +812,17 @@
                                 <button class="quantity-btn" onclick="adjustQty('mirrorDrawer', -1)">−</button>
                                 <span class="quantity-value" id="mirrorDrawer">0</span>
                                 <button class="quantity-btn" onclick="adjustQty('mirrorDrawer', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">开门</div>
+                                <div class="quantity-price">10元/个（1-4个）</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('mirrorOpenDoor', -1)">−</button>
+                                <span class="quantity-value" id="mirrorOpenDoor">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('mirrorOpenDoor', 1)">+</button>
                             </div>
                         </div>
                         <div class="quantity-row">
@@ -1051,8 +1073,8 @@
         };
 
         var quantities = {
-            drawer: 0, mainSmallR: 0, mainLargeR: 0, shelf: 0, basket: 0,
-            mirrorDrawer: 0, mirrorSmallR: 0, mirrorLargeR: 0, mirrorShelf: 0,
+            drawer: 0, openDoor: 0, mainSmallR: 0, mainLargeR: 0, shelf: 0, basket: 0,
+            mirrorDrawer: 0, mirrorOpenDoor: 0, mirrorSmallR: 0, mirrorLargeR: 0, mirrorShelf: 0,
             smartSwitch: 0, lightPillar: 0, radarSensor: 0, handSensor: 0,
             beautyRack: 0, simpleDoor: 0
         };
@@ -1121,7 +1143,8 @@
         }
 
         function adjustQty(key, delta) {
-            quantities[key] = Math.max(0, quantities[key] + delta);
+            var max = (key === 'openDoor' || key === 'mirrorOpenDoor') ? 4 : 999;
+            quantities[key] = Math.min(max, Math.max(0, quantities[key] + delta));
             document.getElementById(key).textContent = quantities[key];
             if (key === 'simpleDoor') {
                 document.getElementById('simpleDoorSizeGroup').style.display = quantities.simpleDoor > 0 ? 'block' : 'none';
@@ -1235,6 +1258,7 @@
             }
 
             if (quantities.mirrorDrawer > 0) { var p1 = quantities.mirrorDrawer * 30; total += p1; details.push({ name: '镜柜抽屉（' + quantities.mirrorDrawer + '个）', price: p1 }); }
+            if (quantities.mirrorOpenDoor > 0) { var p1b = quantities.mirrorOpenDoor * 10; total += p1b; details.push({ name: '镜柜开门（' + quantities.mirrorOpenDoor + '个）', price: p1b }); }
             if (quantities.mirrorSmallR > 0) { var p2 = quantities.mirrorSmallR * 20; total += p2; details.push({ name: '镜柜小R角（' + quantities.mirrorSmallR + '个）', price: p2 }); }
             if (quantities.mirrorLargeR > 0) { var p3 = quantities.mirrorLargeR * 65; total += p3; details.push({ name: '镜柜大R角（' + quantities.mirrorLargeR + '个）', price: p3 }); }
             if (quantities.mirrorShelf > 0) { var p4 = quantities.mirrorShelf * 30; total += p4; details.push({ name: '镜柜置物格（' + quantities.mirrorShelf + '个）', price: p4 }); }
@@ -1280,6 +1304,7 @@
             var ch = parseFloat(document.getElementById('cabinetHeight').value) || 50;
             if (ch > 50) { var hExtra = Math.ceil((ch - 50) / 10); var p13 = hExtra * 30; total += p13; details.push({ name: '主柜超高（' + ch + 'cm，超' + hExtra + '个10cm）', price: p13 }); }
             if (quantities.drawer > 0) { var p14 = quantities.drawer * 30; total += p14; details.push({ name: '主柜抽屉（' + quantities.drawer + '个）', price: p14 }); }
+            if (quantities.openDoor > 0) { var p14b = quantities.openDoor * 10; total += p14b; details.push({ name: '主柜开门（' + quantities.openDoor + '个）', price: p14b }); }
             if (quantities.mainSmallR > 0) { var p15 = quantities.mainSmallR * 20; total += p15; details.push({ name: '主柜小R角（' + quantities.mainSmallR + '个）', price: p15 }); }
             if (quantities.mainLargeR > 0) { var p16 = quantities.mainLargeR * 65; total += p16; details.push({ name: '主柜大R角（' + quantities.mainLargeR + '个）', price: p16 }); }
             if (quantities.shelf > 0) { var p17 = quantities.shelf * 30; total += p17; details.push({ name: '主柜置物格（' + quantities.shelf + '个）', price: p17 }); }
