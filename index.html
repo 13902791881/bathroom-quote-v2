@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>浴室柜快速报价V2</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #3b82f6;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 140px;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 24px 20px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(15,23,42,0.3);
+        }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+        .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+        .header-badge {
+            background: rgba(59,130,246,0.25);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            border: 1px solid rgba(96,165,250,0.3);
+        }
+        .header-desc { font-size: 13px; opacity: 0.7; }
+
+        .container { max-width: 640px; margin: 0 auto; padding: 16px; }
+
+        .tab-bar {
+            display: flex;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(15,23,42,0.2);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(15,23,42,0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .result-card::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(59,130,246,0.1);
+            border-radius: 50%;
+        }
+        .result-card::after {
+            content: "";
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 150px;
+            height: 150px;
+            background: rgba(96,165,250,0.08);
+            border-radius: 50%;
+        }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative; }
+        .result-label { font-size: 14px; opacity: 0.8; }
+        .result-actions { display: flex; gap: 8px; }
+        .result-action-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .result-action-btn:active { background: rgba(255,255,255,0.22); transform: scale(0.95); }
+        .result-price {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            position: relative;
+            letter-spacing: -1px;
+        }
+        .result-price span { font-size: 20px; font-weight: 500; margin-right: 4px; opacity: 0.9; }
+        .result-summary { display: flex; gap: 10px; flex-wrap: wrap; position: relative; }
+        .result-tag {
+            background: rgba(59,130,246,0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            border: 1px solid rgba(96,165,250,0.2);
+        }
+
+        .accordion-item {
+            background: var(--card);
+            border-radius: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            cursor: pointer;
+            background: var(--card);
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+        .accordion-header:active { background: #f8fafc; }
+        .accordion-header-left { display: flex; align-items: center; gap: 12px; }
+        .accordion-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .accordion-title { font-size: 15px; font-weight: 600; color: var(--text); }
+        .accordion-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .accordion-arrow {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .accordion-item.active .accordion-arrow { transform: rotate(180deg); background: #e2e8f0; }
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s;
+        }
+        .accordion-item.active .accordion-body { max-height: none; }
+        .accordion-content { padding: 0 20px 20px; }
+
+        .icon-primary { background: #eff6ff; color: var(--accent); }
+        .icon-mirror { background: #fef3c7; color: #d97706; }
+        .icon-cabinet { background: #fdf2f8; color: #db2777; }
+        .icon-door { background: #f0fdfa; color: #0d9488; }
+        .icon-customer { background: #f5f3ff; color: #7c3aed; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group:last-child { margin-bottom: 0; }
+        .form-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
+        .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            background: #fafafa;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        .input-suffix { display: flex; align-items: center; gap: 8px; }
+        .input-suffix .form-input { flex: 1; }
+        .input-suffix span { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+
+        .radio-group { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .radio-option input { display: none; }
+        .radio-option label {
+            display: block;
+            padding: 14px 4px;
+            text-align: center;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fafafa;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .radio-option input:checked + label {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .radio-option label:active { transform: scale(0.97); }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: #fafafa;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .checkbox-item.active { border-color: var(--accent); background: #eff6ff; }
+        .checkbox-item input { display: none; }
+        .checkbox-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+        .checkbox-label { font-size: 14px; font-weight: 500; color: var(--text); }
+        .checkbox-price { font-size: 13px; color: var(--success); font-weight: 600; }
+        .checkbox-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: transparent;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .checkbox-item.active .checkbox-check {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .quantity-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            background: #fafafa;
+            margin-bottom: 10px;
+        }
+        .quantity-info { flex: 1; }
+        .quantity-name { font-size: 14px; font-weight: 500; color: var(--text); }
+        .quantity-price { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .quantity-control { display: flex; align-items: center; gap: 12px; }
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: 1.5px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            user-select: none;
+        }
+        .quantity-btn:active { background: var(--primary); color: white; border-color: var(--primary); }
+        .quantity-value { width: 32px; text-align: center; font-size: 16px; font-weight: 600; color: var(--text); }
+
+        .sub-section {
+            margin-top: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .sub-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .price-tier {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+        }
+        .price-tier.active {
+            background: #eff6ff;
+            border-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .current-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent);
+            padding: 12px;
+            background: #eff6ff;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card);
+            padding: 12px 16px 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+            display: flex;
+            gap: 10px;
+            z-index: 99;
+            border-top: 1px solid var(--border);
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(15,23,42,0.25);
+        }
+        .btn-primary:active { transform: translateY(1px); }
+        .btn-secondary { background: #f1f5f9; color: var(--text-secondary); }
+        .btn-secondary:active { background: #e2e8f0; }
+        .btn-success {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(5,150,105,0.25);
+        }
+        .btn-success:active { transform: translateY(1px); }
+
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(15,23,42,0.9);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.5);
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card);
+            border-radius: 20px 20px 0 0;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 201;
+            transform: translateY(100%);
+            transition: transform 0.35s;
+        }
+        .modal.show { transform: translateY(0); }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--card);
+            z-index: 1;
+        }
+        .modal-title { font-size: 17px; font-weight: 700; color: var(--text); }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+        .modal-body { padding: 16px 20px 30px; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-name { font-size: 14px; color: var(--text-secondary); }
+        .detail-price { font-size: 14px; font-weight: 600; color: var(--text); }
+        .detail-row.total {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 2px solid var(--border);
+            border-bottom: none;
+        }
+        .detail-row.total .detail-name { font-size: 16px; font-weight: 700; color: var(--text); }
+        .detail-row.total .detail-price { font-size: 18px; font-weight: 700; color: var(--accent); }
+
+        .history-item {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .history-title { font-size: 15px; font-weight: 600; }
+        .history-price { font-size: 16px; font-weight: 700; color: var(--accent); }
+        .history-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .history-btn:active { background: #f1f5f9; }
+        .history-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .history-btn.danger { color: var(--danger); border-color: var(--danger); }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+        .empty-state-text { font-size: 14px; }
+
+        .quote-preview {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .quote-preview h3 { text-align: center; font-size: 18px; margin-bottom: 20px; color: var(--primary); }
+        .quote-preview .q-row { display: flex; justify-content: space-between; padding: 6px 0; }
+        .quote-preview .q-row.total {
+            border-top: 2px solid var(--primary);
+            margin-top: 12px;
+            padding-top: 12px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .quote-preview .q-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+        .quote-preview .q-header p { margin: 4px 0; color: var(--text-secondary); }
+
+        @media (max-width: 480px) {
+            .container { padding: 12px; }
+            .result-price { font-size: 36px; }
+            .radio-group { gap: 6px; }
+            .radio-option label { padding: 12px 2px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-top">
+            <h1>浴室柜报价</h1>
+            <span class="header-badge">V2 · 新价格表</span>
+        </div>
+        <p class="header-desc">选择配置，实时计算价格</p>
+    </div>
+
+    <div class="container">
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('quote')">报价</button>
+            <button class="tab-btn" onclick="switchTab('history')">历史记录</button>
+        </div>
+
+        <div class="tab-content active" id="tab-quote">
+            <div class="accordion-item">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-header-left">
+                        <div class="accordion-icon icon-customer">👤</div>
+                        <div>
+                            <div class="accordion-title">客户信息</div>
+                            <div class="accordion-subtitle">选填，用于保存记录</div>
+                        </div>
+                    </div>
+                    <div class="accordion-arrow">▼</div>
+                </button>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label class="form-label">客户姓名</label>
+                            <input type="text" class="form-input" id="customerName" placeholder="输入客户姓名">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">联系电话</label>
+                            <input type="tel" class="form-input" id="customerPhone" placeholder="输入联系电话">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">备注</label>
+                            <input type="text" class="form-input" id="customerNote" placeholder="如：某小区某栋">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <div class="result-header">
+                    <span class="result-label">预估总价</span>
+                    <div class="result-actions">
+                        <button class="result-action-btn" onclick="showDetail()">明细</button>
+                        <button class="result-action-btn" onclick="showQuotePreview()">报价单</button>
+                    </div>
+                </div>
+                <div class="result-price"><span>¥</span><span id="totalPrice">0</span></div>
+                <div class="result-summary" id="resultSummary">
+                    <span class="result-tag">SPC · 1.0m</span>
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-header-left">
+                        <div class="accordion-icon icon-primary">📐</div>
+                        <div>
+                            <div class="accordion-title">基础配置</div>
+                            <div class="accordion-subtitle">选择材质</div>
+                        </div>
+                    </div>
+                    <div class="accordion-arrow">▼</div>
+                </button>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label class="form-label">材质选择</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" name="material" id="mat-spc" value="spc" checked>
+                                    <label for="mat-spc">SPC</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" name="material" id="mat-dcq" value="dcq">
+                                    <label for="mat-dcq">多层漆</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" name="material" id="mat-mdf" value="mdf">
+                                    <label for="mat-mdf">MDF</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" name="material" id="mat-al" value="al">
+                                    <label for="mat-al">全铝</label>
+                                </div>
+                            </div>
+                            <div class="form-hint">基准规格：100cm × 50cm × 50cm，单价按长度（米）计价</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-header-left">
+                        <div class="accordion-icon icon-cabinet">🗄️</div>
+                        <div>
+                            <div class="accordion-title">主柜配置</div>
+                            <div class="accordion-subtitle">尺寸、抽屉、R角、拉篮等</div>
+                        </div>
+                    </div>
+                    <div class="accordion-arrow">▼</div>
+                </button>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label class="form-label">主柜长度</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="cabinetLength" placeholder="如：1.2" step="0.1" min="0.1" value="1">
+                                <span>米</span>
+                            </div>
+                            <div class="form-hint">主柜价 = 主柜单价 × 主柜长度（<span id="cabinetUnitText">SPC 280元/米</span>）</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">主柜深度</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="cabinetDepth" value="50">
+                                <span>cm</span>
+                            </div>
+                            <div class="form-hint">50cm以内按50算，超出每10cm加收30元</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">主柜高度</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="cabinetHeight" value="50">
+                                <span>cm</span>
+                            </div>
+                            <div class="form-hint">50cm以内按50算，超出每10cm加收30元</div>
+                        </div>
+                        <div class="divider"></div>
+                        <label class="form-label">附加组件</label>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">抽屉</div>
+                                <div class="quantity-price">加30元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('drawer', -1)">−</button>
+                                <span class="quantity-value" id="drawer">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('drawer', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">小R角</div>
+                                <div class="quantity-price">20元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('mainSmallR', -1)">−</button>
+                                <span class="quantity-value" id="mainSmallR">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('mainSmallR', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">大R角（大于R15）</div>
+                                <div class="quantity-price">一个加65元</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('mainLargeR', -1)">−</button>
+                                <span class="quantity-value" id="mainLargeR">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('mainLargeR', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">置物格</div>
+                                <div class="quantity-price">30元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('shelf', -1)">−</button>
+                                <span class="quantity-value" id="shelf">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('shelf', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">普通拉篮</div>
+                                <div class="quantity-price">50元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('basket', -1)">−</button>
+                                <span class="quantity-value" id="basket">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('basket', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 12px;">
+                            <label class="form-label">烤漆门板面积</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="paintDoorArea" value="0" min="0" step="0.1">
+                                <span>m² × 400元</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-header-left">
+                        <div class="accordion-icon icon-mirror">🪞</div>
+                        <div>
+                            <div class="accordion-title">镜柜配置</div>
+                            <div class="accordion-subtitle">尺寸、智能、配件</div>
+                        </div>
+                    </div>
+                    <div class="accordion-arrow">▼</div>
+                </button>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="form-group">
+                            <label class="form-label">镜柜长度</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="mirrorLength" placeholder="如：1.2" step="0.1" min="0.1" value="1">
+                                <span>米</span>
+                            </div>
+                            <div class="form-hint">镜柜价 = 镜柜单价 × 镜柜长度（<span id="mirrorUnitText">SPC 150元/米</span>）</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">镜柜深度</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="mirrorDepth" value="20">
+                                <span>cm</span>
+                            </div>
+                            <div class="form-hint">默认20cm，小于20按20计算（不计价）</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">镜柜高度</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="mirrorHeight" value="75">
+                                <span>cm</span>
+                            </div>
+                            <div class="form-hint">75cm以内按75算，超出每10cm加收20元</div>
+                        </div>
+                        <div class="divider"></div>
+                        <label class="form-label">镜柜附加组件</label>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">抽屉</div>
+                                <div class="quantity-price">加30元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('mirrorDrawer', -1)">−</button>
+                                <span class="quantity-value" id="mirrorDrawer">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('mirrorDrawer', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">小R角</div>
+                                <div class="quantity-price">20元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('mirrorSmallR', -1)">−</button>
+                                <span class="quantity-value" id="mirrorSmallR">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('mirrorSmallR', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">大R角（大于R15）</div>
+                                <div class="quantity-price">一个加65元</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('mirrorLargeR', -1)">−</button>
+                                <span class="quantity-value" id="mirrorLargeR">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('mirrorLargeR', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">置物格</div>
+                                <div class="quantity-price">30元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('mirrorShelf', -1)">−</button>
+                                <span class="quantity-value" id="mirrorShelf">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('mirrorShelf', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <label class="form-label">智能镜柜</label>
+                        <div class="checkbox-item" onclick="toggleCheckbox('smartMirror')">
+                            <div class="checkbox-left">
+                                <input type="checkbox" id="smartMirror" onchange="toggleSmartOptions()">
+                                <span class="checkbox-check">✓</span>
+                                <span class="checkbox-label">启用智能镜柜</span>
+                            </div>
+                            <span class="checkbox-price">按长度计价</span>
+                        </div>
+                        <div class="sub-section" id="smartOptions" style="display: none;">
+                            <div class="sub-section-title">智能加价（按镜柜长度自动计算）</div>
+                            <div class="price-tier" id="tier-12">≤1.2m（小于100cm按100cm计）：+40元/套</div>
+                            <div class="price-tier" id="tier-15">1.2m-1.5m：+80元/套</div>
+                            <div class="price-tier" id="tier-20">1.5m-2m：+120元/套</div>
+                            <div class="form-hint" style="margin-bottom: 8px;">超过2m同按120元/套计</div>
+                            <div class="current-price">当前镜柜 <span id="smartLenText">1.0</span>m，智能镜柜 +<span id="smartPriceText">40</span>元/套</div>
+                            <div class="quantity-row" style="margin-top: 12px;">
+                                <div class="quantity-info">
+                                    <div class="quantity-name">加开关（套）</div>
+                                    <div class="quantity-price">+40元/套（双开门、多开门需加开关）</div>
+                                </div>
+                                <div class="quantity-control">
+                                    <button class="quantity-btn" onclick="adjustQty('smartSwitch', -1)">−</button>
+                                    <span class="quantity-value" id="smartSwitch">0</span>
+                                    <button class="quantity-btn" onclick="adjustQty('smartSwitch', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <label class="form-label">其他配件</label>
+                        <div class="form-group">
+                            <label class="form-label">上下藏光灯光槽长度</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="lightSlot" value="0" min="0" step="0.1">
+                                <span>米 × 30元</span>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">左右灯柱</div>
+                                <div class="quantity-price">30元/条（1m内）</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('lightPillar', -1)">−</button>
+                                <span class="quantity-value" id="lightPillar">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('lightPillar', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="checkbox-item" onclick="toggleCheckbox('layerLight')">
+                            <div class="checkbox-left">
+                                <input type="checkbox" id="layerLight">
+                                <span class="checkbox-check">✓</span>
+                                <span class="checkbox-label">层板灯</span>
+                            </div>
+                            <span class="checkbox-price">+20元</span>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">雷达感应</div>
+                                <div class="quantity-price">20元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('radarSensor', -1)">−</button>
+                                <span class="quantity-value" id="radarSensor">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('radarSensor', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">手扫感应</div>
+                                <div class="quantity-price">25元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('handSensor', -1)">−</button>
+                                <span class="quantity-value" id="handSensor">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('handSensor', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-header-left">
+                        <div class="accordion-icon icon-door">🚪</div>
+                        <div>
+                            <div class="accordion-title">镜门与功能</div>
+                            <div class="accordion-subtitle">风水镜、铝框门、美妆架等</div>
+                        </div>
+                    </div>
+                    <div class="accordion-arrow">▼</div>
+                </button>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <div class="checkbox-item" onclick="toggleCheckbox('foldMirror')">
+                            <div class="checkbox-left">
+                                <input type="checkbox" id="foldMirror">
+                                <span class="checkbox-check">✓</span>
+                                <span class="checkbox-label">推拉/折叠风水镜</span>
+                            </div>
+                            <span class="checkbox-price">+120元</span>
+                        </div>
+                        <div class="form-group" style="margin-top: 12px;">
+                            <label class="form-label">铝框镜门面积</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="aluFrameArea" value="0" min="0" step="0.1">
+                                <span>m² × 300元</span>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">镜门美妆架</div>
+                                <div class="quantity-price">30元/个（大尺寸另算）</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('beautyRack', -1)">−</button>
+                                <span class="quantity-value" id="beautyRack">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('beautyRack', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="quantity-row">
+                            <div class="quantity-info">
+                                <div class="quantity-name">极简门</div>
+                                <div class="quantity-price" id="simpleDoorPriceText">50元/个</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="adjustQty('simpleDoor', -1)">−</button>
+                                <span class="quantity-value" id="simpleDoor">0</span>
+                                <button class="quantity-btn" onclick="adjustQty('simpleDoor', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group" id="simpleDoorSizeGroup" style="display: none;">
+                            <label class="form-label">极简门尺寸</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="simpleDoorW" value="0.4" min="0" step="0.1">
+                                <span>宽m</span>
+                            </div>
+                            <div class="input-suffix" style="margin-top: 8px;">
+                                <input type="number" class="form-input" id="simpleDoorH" value="0.7" min="0" step="0.1">
+                                <span>高m</span>
+                            </div>
+                            <div class="form-hint">宽度超0.4m、高度超0.7m，超出部分加20元/10公分（按每个门计）</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">智能镜片长度（高度80cm以内）</label>
+                            <div class="input-suffix">
+                                <input type="number" class="form-input" id="smartLensLen" value="0" min="0" step="0.1">
+                                <span>米 × 400元</span>
+                            </div>
+                        </div>
+                        <div class="checkbox-item" onclick="toggleCheckbox('smartLensFrame')">
+                            <div class="checkbox-left">
+                                <input type="checkbox" id="smartLensFrame">
+                                <span class="checkbox-check">✓</span>
+                                <span class="checkbox-label">智能镜片加框</span>
+                            </div>
+                            <span class="checkbox-price">+100元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-history">
+            <div id="historyList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <div class="empty-state-text">暂无报价记录</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <button class="btn btn-secondary" onclick="resetForm()">重置</button>
+        <button class="btn btn-success" onclick="saveQuote()">保存记录</button>
+        <button class="btn btn-primary" onclick="calculate()">刷新计算</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeAllModals()"></div>
+    <div class="modal" id="detailModal">
+        <div class="modal-header">
+            <span class="modal-title">报价明细</span>
+            <button class="modal-close" onclick="closeAllModals()">✕</button>
+        </div>
+        <div class="modal-body" id="detailBody"></div>
+    </div>
+
+    <div class="modal" id="quoteModal">
+        <div class="modal-header">
+            <span class="modal-title">报价单预览</span>
+            <button class="modal-close" onclick="closeAllModals()">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="quote-preview" id="quotePreview"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="closeAllModals()">关闭</button>
+                <button class="btn btn-primary" onclick="copyQuoteText()">复制文本</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        var basePrices = {
+            spc: { mirror: 150, cabinet: 280 },
+            dcq: { mirror: 150, cabinet: 280 },
+            mdf: { mirror: 100, cabinet: 180 },
+            al: { mirror: 450, cabinet: 500 }
+        };
+
+        var quantities = {
+            drawer: 0, mainSmallR: 0, mainLargeR: 0, shelf: 0, basket: 0,
+            mirrorDrawer: 0, mirrorSmallR: 0, mirrorLargeR: 0, mirrorShelf: 0,
+            smartSwitch: 0, lightPillar: 0, radarSensor: 0, handSensor: 0,
+            beautyRack: 0, simpleDoor: 0
+        };
+
+        var currentDetails = [];
+        var quoteHistory = [];
+        try { quoteHistory = JSON.parse(localStorage.getItem('bathroomQuoteHistoryV2') || '[]'); } catch (e) { quoteHistory = []; }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputs = document.querySelectorAll('input[type="number"], input[type="radio"], input[type="text"], input[type="tel"]');
+            inputs.forEach(function(input) {
+                input.addEventListener('input', calculate);
+                input.addEventListener('change', calculate);
+            });
+            document.querySelectorAll('.checkbox-item input').forEach(function(cb) {
+                cb.addEventListener('change', function() {
+                    this.closest('.checkbox-item').classList.toggle('active', this.checked);
+                    calculate();
+                });
+            });
+            renderHistory();
+            calculate();
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+            if (tab === 'history') renderHistory();
+        }
+
+        function toggleAccordion(btn) {
+            var item = btn.closest('.accordion-item');
+            var body = item.querySelector('.accordion-body');
+            var isActive = item.classList.contains('active');
+            if (isActive) {
+                body.style.maxHeight = body.scrollHeight + 'px';
+                requestAnimationFrame(function() {
+                    body.style.maxHeight = '0';
+                });
+                item.classList.remove('active');
+            } else {
+                item.classList.add('active');
+                body.style.maxHeight = body.scrollHeight + 'px';
+                setTimeout(function() {
+                    if (item.classList.contains('active')) body.style.maxHeight = 'none';
+                }, 420);
+            }
+        }
+
+        function toggleCheckbox(id) {
+            var cb = document.getElementById(id);
+            cb.checked = !cb.checked;
+            cb.dispatchEvent(new Event('change'));
+        }
+
+        function toggleSmartOptions() {
+            var el = document.getElementById('smartOptions');
+            el.style.display = document.getElementById('smartMirror').checked ? 'block' : 'none';
+            var body = el.closest('.accordion-body');
+            if (body && body.closest('.accordion-item').classList.contains('active')) {
+                body.style.maxHeight = 'none';
+            }
+            calculate();
+        }
+
+        function adjustQty(key, delta) {
+            quantities[key] = Math.max(0, quantities[key] + delta);
+            document.getElementById(key).textContent = quantities[key];
+            if (key === 'simpleDoor') {
+                document.getElementById('simpleDoorSizeGroup').style.display = quantities.simpleDoor > 0 ? 'block' : 'none';
+            }
+            calculate();
+        }
+
+        function getMaterialName(key) {
+            var names = { spc: 'SPC', dcq: '多层漆', mdf: 'MDF', al: '全铝' };
+            return names[key] || key;
+        }
+
+        function getSmartMirrorPrice(lengthM) {
+            if (lengthM <= 1.2) return 40;
+            if (lengthM <= 1.5) return 80;
+            return 120;
+        }
+
+        function getSimpleDoorSurcharge(w, h) {
+            var s = 0;
+            if (w > 0.4) s += Math.ceil((w - 0.4) / 0.1) * 20;
+            if (h > 0.7) s += Math.ceil((h - 0.7) / 0.1) * 20;
+            return s;
+        }
+
+        function getFormData() {
+            return {
+                customerName: document.getElementById('customerName').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                customerNote: document.getElementById('customerNote').value,
+                material: document.querySelector('input[name="material"]:checked').value,
+                mirrorLength: parseFloat(document.getElementById('mirrorLength').value) || 1,
+                mirrorDepth: parseFloat(document.getElementById('mirrorDepth').value) || 20,
+                mirrorHeight: parseFloat(document.getElementById('mirrorHeight').value) || 75,
+                cabinetLength: parseFloat(document.getElementById('cabinetLength').value) || 1,
+                cabinetDepth: parseFloat(document.getElementById('cabinetDepth').value) || 50,
+                cabinetHeight: parseFloat(document.getElementById('cabinetHeight').value) || 50,
+                smartMirror: document.getElementById('smartMirror').checked,
+                lightSlot: parseFloat(document.getElementById('lightSlot').value) || 0,
+                layerLight: document.getElementById('layerLight').checked,
+                foldMirror: document.getElementById('foldMirror').checked,
+                aluFrameArea: parseFloat(document.getElementById('aluFrameArea').value) || 0,
+                smartLensLen: parseFloat(document.getElementById('smartLensLen').value) || 0,
+                smartLensFrame: document.getElementById('smartLensFrame').checked,
+                paintDoorArea: parseFloat(document.getElementById('paintDoorArea').value) || 0,
+                simpleDoorW: parseFloat(document.getElementById('simpleDoorW').value) || 0.4,
+                simpleDoorH: parseFloat(document.getElementById('simpleDoorH').value) || 0.7,
+                quantities: JSON.parse(JSON.stringify(quantities))
+            };
+        }
+
+        function setFormData(data) {
+            document.getElementById('customerName').value = data.customerName || '';
+            document.getElementById('customerPhone').value = data.customerPhone || '';
+            document.getElementById('customerNote').value = data.customerNote || '';
+            var matRadio = document.querySelector('input[name="material"][value="' + data.material + '"]');
+            if (matRadio) matRadio.checked = true;
+            var legacyLen = data.length || 1;
+            document.getElementById('mirrorLength').value = data.mirrorLength || legacyLen;
+            document.getElementById('mirrorDepth').value = data.mirrorDepth || 20;
+            document.getElementById('mirrorHeight').value = data.mirrorHeight || 75;
+            document.getElementById('cabinetLength').value = data.cabinetLength || legacyLen;
+            document.getElementById('cabinetDepth').value = data.cabinetDepth || 50;
+            document.getElementById('cabinetHeight').value = data.cabinetHeight || 50;
+            document.getElementById('smartMirror').checked = data.smartMirror || false;
+            document.getElementById('smartOptions').style.display = data.smartMirror ? 'block' : 'none';
+            document.getElementById('lightSlot').value = data.lightSlot || 0;
+            document.getElementById('layerLight').checked = data.layerLight || false;
+            document.getElementById('foldMirror').checked = data.foldMirror || false;
+            document.getElementById('aluFrameArea').value = data.aluFrameArea || 0;
+            document.getElementById('smartLensLen').value = data.smartLensLen || 0;
+            document.getElementById('smartLensFrame').checked = data.smartLensFrame || false;
+            document.getElementById('paintDoorArea').value = data.paintDoorArea || 0;
+            document.getElementById('simpleDoorW').value = data.simpleDoorW || 0.4;
+            document.getElementById('simpleDoorH').value = data.simpleDoorH || 0.7;
+            var q = data.quantities || {};
+            Object.keys(quantities).forEach(function(key) {
+                quantities[key] = q[key] || 0;
+                var el = document.getElementById(key);
+                if (el) el.textContent = quantities[key];
+            });
+            document.getElementById('simpleDoorSizeGroup').style.display = quantities.simpleDoor > 0 ? 'block' : 'none';
+            document.querySelectorAll('.checkbox-item input').forEach(function(cb) {
+                var item = cb.closest('.checkbox-item');
+                if (item) item.classList.toggle('active', cb.checked);
+            });
+            calculate();
+        }
+
+        function calculate() {
+            var material = document.querySelector('input[name="material"]:checked').value;
+            var mirrorLength = parseFloat(document.getElementById('mirrorLength').value) || 0;
+            var cabinetLength = parseFloat(document.getElementById('cabinetLength').value) || 0;
+            var total = 0;
+            var details = [];
+
+            var mirrorUnit = basePrices[material].mirror;
+            var cabinetUnit = basePrices[material].cabinet;
+            var mirrorBase = mirrorUnit * mirrorLength;
+            var cabinetBase = cabinetUnit * cabinetLength;
+            total += mirrorBase + cabinetBase;
+            details.push({ name: '镜柜基础价（' + getMaterialName(material) + ' ' + mirrorUnit + '元/米 × ' + mirrorLength + 'm）', price: mirrorBase });
+            details.push({ name: '主柜基础价（' + getMaterialName(material) + ' ' + cabinetUnit + '元/米 × ' + cabinetLength + 'm）', price: cabinetBase });
+
+            var mh = parseFloat(document.getElementById('mirrorHeight').value) || 75;
+            if (mh > 75) {
+                var mExtra = Math.ceil((mh - 75) / 10);
+                var mp = mExtra * 20;
+                total += mp;
+                details.push({ name: '镜柜超高（' + mh + 'cm，超' + mExtra + '个10cm）', price: mp });
+            }
+
+            if (quantities.mirrorDrawer > 0) { var p1 = quantities.mirrorDrawer * 30; total += p1; details.push({ name: '镜柜抽屉（' + quantities.mirrorDrawer + '个）', price: p1 }); }
+            if (quantities.mirrorSmallR > 0) { var p2 = quantities.mirrorSmallR * 20; total += p2; details.push({ name: '镜柜小R角（' + quantities.mirrorSmallR + '个）', price: p2 }); }
+            if (quantities.mirrorLargeR > 0) { var p3 = quantities.mirrorLargeR * 65; total += p3; details.push({ name: '镜柜大R角（' + quantities.mirrorLargeR + '个）', price: p3 }); }
+            if (quantities.mirrorShelf > 0) { var p4 = quantities.mirrorShelf * 30; total += p4; details.push({ name: '镜柜置物格（' + quantities.mirrorShelf + '个）', price: p4 }); }
+
+            if (document.getElementById('smartMirror').checked) {
+                var sp = getSmartMirrorPrice(mirrorLength);
+                total += sp;
+                details.push({ name: '智能镜柜（' + mirrorLength + 'm，' + sp + '元/套）', price: sp });
+                if (quantities.smartSwitch > 0) {
+                    var swp = quantities.smartSwitch * 40;
+                    total += swp;
+                    details.push({ name: '加开关（' + quantities.smartSwitch + '套）', price: swp });
+                }
+            }
+
+            var ls = parseFloat(document.getElementById('lightSlot').value) || 0;
+            if (ls > 0) { var p5 = ls * 30; total += p5; details.push({ name: '上下藏光灯光槽（' + ls + 'm）', price: p5 }); }
+            if (quantities.lightPillar > 0) { var p6 = quantities.lightPillar * 30; total += p6; details.push({ name: '左右灯柱（' + quantities.lightPillar + '条）', price: p6 }); }
+            if (document.getElementById('layerLight').checked) { total += 20; details.push({ name: '层板灯', price: 20 }); }
+            if (quantities.radarSensor > 0) { var p7 = quantities.radarSensor * 20; total += p7; details.push({ name: '雷达感应（' + quantities.radarSensor + '个）', price: p7 }); }
+            if (quantities.handSensor > 0) { var p8 = quantities.handSensor * 25; total += p8; details.push({ name: '手扫感应（' + quantities.handSensor + '个）', price: p8 }); }
+
+            if (document.getElementById('foldMirror').checked) { total += 120; details.push({ name: '推拉/折叠风水镜', price: 120 }); }
+            var af = parseFloat(document.getElementById('aluFrameArea').value) || 0;
+            if (af > 0) { var p9 = af * 300; total += p9; details.push({ name: '铝框镜门（' + af + 'm²）', price: p9 }); }
+            if (quantities.beautyRack > 0) { var p10 = quantities.beautyRack * 30; total += p10; details.push({ name: '镜门美妆架（' + quantities.beautyRack + '个）', price: p10 }); }
+
+            if (quantities.simpleDoor > 0) {
+                var sdW = parseFloat(document.getElementById('simpleDoorW').value) || 0;
+                var sdH = parseFloat(document.getElementById('simpleDoorH').value) || 0;
+                var surcharge = getSimpleDoorSurcharge(sdW, sdH);
+                var sdp = quantities.simpleDoor * (50 + surcharge);
+                total += sdp;
+                details.push({ name: '极简门（' + quantities.simpleDoor + '个，' + sdW + 'm×' + sdH + 'm）', price: sdp });
+            }
+
+            var sml = parseFloat(document.getElementById('smartLensLen').value) || 0;
+            if (sml > 0) { var p11 = sml * 400; total += p11; details.push({ name: '智能镜片（' + sml + 'm）', price: p11 }); }
+            if (document.getElementById('smartLensFrame').checked) { total += 100; details.push({ name: '智能镜片加框', price: 100 }); }
+
+            var cd = parseFloat(document.getElementById('cabinetDepth').value) || 50;
+            if (cd > 50) { var dExtra = Math.ceil((cd - 50) / 10); var p12 = dExtra * 30; total += p12; details.push({ name: '主柜超深（' + cd + 'cm，超' + dExtra + '个10cm）', price: p12 }); }
+            var ch = parseFloat(document.getElementById('cabinetHeight').value) || 50;
+            if (ch > 50) { var hExtra = Math.ceil((ch - 50) / 10); var p13 = hExtra * 30; total += p13; details.push({ name: '主柜超高（' + ch + 'cm，超' + hExtra + '个10cm）', price: p13 }); }
+            if (quantities.drawer > 0) { var p14 = quantities.drawer * 30; total += p14; details.push({ name: '主柜抽屉（' + quantities.drawer + '个）', price: p14 }); }
+            if (quantities.mainSmallR > 0) { var p15 = quantities.mainSmallR * 20; total += p15; details.push({ name: '主柜小R角（' + quantities.mainSmallR + '个）', price: p15 }); }
+            if (quantities.mainLargeR > 0) { var p16 = quantities.mainLargeR * 65; total += p16; details.push({ name: '主柜大R角（' + quantities.mainLargeR + '个）', price: p16 }); }
+            if (quantities.shelf > 0) { var p17 = quantities.shelf * 30; total += p17; details.push({ name: '主柜置物格（' + quantities.shelf + '个）', price: p17 }); }
+            if (quantities.basket > 0) { var p18 = quantities.basket * 50; total += p18; details.push({ name: '普通拉篮（' + quantities.basket + '个）', price: p18 }); }
+            var pd = parseFloat(document.getElementById('paintDoorArea').value) || 0;
+            if (pd > 0) { var p19 = pd * 400; total += p19; details.push({ name: '烤漆门板（' + pd + 'm²）', price: p19 }); }
+
+            currentDetails = details;
+            document.getElementById('totalPrice').textContent = total.toLocaleString();
+            var summary = document.getElementById('resultSummary');
+            var lengthTag = mirrorLength === cabinetLength
+                ? getMaterialName(material) + ' · ' + mirrorLength + 'm'
+                : getMaterialName(material) + ' · 镜' + mirrorLength + 'm/柜' + cabinetLength + 'm';
+            summary.innerHTML = '<span class="result-tag">' + lengthTag + '</span>'
+                + (details.length > 2 ? '<span class="result-tag">' + (details.length - 2) + '项附加</span>' : '');
+            document.getElementById('mirrorUnitText').textContent = getMaterialName(material) + ' ' + mirrorUnit + '元/米';
+            document.getElementById('cabinetUnitText').textContent = getMaterialName(material) + ' ' + cabinetUnit + '元/米';
+
+            var smartPrice = getSmartMirrorPrice(mirrorLength);
+            document.getElementById('smartLenText').textContent = mirrorLength;
+            document.getElementById('smartPriceText').textContent = smartPrice;
+            ['tier-12','tier-15','tier-20'].forEach(function(id) {
+                document.getElementById(id).classList.remove('active');
+            });
+            if (mirrorLength <= 1.2) document.getElementById('tier-12').classList.add('active');
+            else if (mirrorLength <= 1.5) document.getElementById('tier-15').classList.add('active');
+            else document.getElementById('tier-20').classList.add('active');
+
+            var sdW2 = parseFloat(document.getElementById('simpleDoorW').value) || 0;
+            var sdH2 = parseFloat(document.getElementById('simpleDoorH').value) || 0;
+            var sdSur = getSimpleDoorSurcharge(sdW2, sdH2);
+            document.getElementById('simpleDoorPriceText').textContent = sdSur > 0 ? (50 + sdSur) + '元/个（含超规格加价）' : '50元/个';
+        }
+
+        function saveQuote() {
+            var data = getFormData();
+            var total = currentDetails.reduce(function(s, i) { return s + i.price; }, 0);
+            var record = {
+                id: Date.now(),
+                date: new Date().toLocaleString('zh-CN'),
+                material: data.material,
+                customerName: data.customerName,
+                customerPhone: data.customerPhone,
+                customerNote: data.customerNote,
+                mirrorLength: data.mirrorLength,
+                mirrorDepth: data.mirrorDepth,
+                mirrorHeight: data.mirrorHeight,
+                cabinetLength: data.cabinetLength,
+                cabinetDepth: data.cabinetDepth,
+                cabinetHeight: data.cabinetHeight,
+                smartMirror: data.smartMirror,
+                lightSlot: data.lightSlot,
+                layerLight: data.layerLight,
+                foldMirror: data.foldMirror,
+                aluFrameArea: data.aluFrameArea,
+                smartLensLen: data.smartLensLen,
+                smartLensFrame: data.smartLensFrame,
+                paintDoorArea: data.paintDoorArea,
+                simpleDoorW: data.simpleDoorW,
+                simpleDoorH: data.simpleDoorH,
+                quantities: data.quantities,
+                total: total,
+                details: currentDetails.slice()
+            };
+            quoteHistory.unshift(record);
+            localStorage.setItem('bathroomQuoteHistoryV2', JSON.stringify(quoteHistory));
+            showToast('已保存到历史记录');
+        }
+
+        function renderHistory() {
+            var list = document.getElementById('historyList');
+            if (quoteHistory.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">暂无报价记录</div></div>';
+                return;
+            }
+            var html = '';
+            quoteHistory.forEach(function(item, index) {
+                html += '<div class="history-item">'
+                    + '<div class="history-header">'
+                    + '<span class="history-title">' + (item.customerName || '未命名客户') + '</span>'
+                    + '<span class="history-price">¥' + item.total.toLocaleString() + '</span>'
+                    + '</div>'
+                    + '<div class="history-meta">'
+                    + '<span>' + item.date + '</span>'
+                    + '<span>' + getMaterialName(item.material) + ' · 镜' + (item.mirrorLength || 1) + 'm/柜' + (item.cabinetLength || 1) + 'm</span>'
+                    + '</div>'
+                    + '<div class="history-actions">'
+                    + '<button class="history-btn primary" onclick="loadQuote(' + index + ')">加载</button>'
+                    + '<button class="history-btn" onclick="copyHistoryQuote(' + index + ')">复制</button>'
+                    + '<button class="history-btn danger" onclick="deleteQuote(' + index + ')">删除</button>'
+                    + '</div>'
+                    + '</div>';
+            });
+            list.innerHTML = html;
+        }
+
+        function loadQuote(index) {
+            var item = quoteHistory[index];
+            setFormData(item);
+            switchTab('quote');
+            document.querySelector('.tab-btn').click();
+            showToast('已加载历史报价');
+        }
+
+        function copyHistoryQuote(index) {
+            var item = quoteHistory[index];
+            var text = generateQuoteText(item);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() { showToast('报价单已复制'); }).catch(function() { fallbackCopy(text); });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showToast('报价单已复制');
+            } catch (e) {
+                showToast('复制失败');
+            }
+            document.body.removeChild(ta);
+        }
+
+        function deleteQuote(index) {
+            if (!confirm('确定删除这条记录？')) return;
+            quoteHistory.splice(index, 1);
+            localStorage.setItem('bathroomQuoteHistoryV2', JSON.stringify(quoteHistory));
+            renderHistory();
+            showToast('已删除');
+        }
+
+        function generateQuoteText(data) {
+            var text = '【浴室柜报价单】\n';
+            if (data.customerName) text += '客户：' + data.customerName + '\n';
+            if (data.customerPhone) text += '电话：' + data.customerPhone + '\n';
+            if (data.customerNote) text += '备注：' + data.customerNote + '\n';
+            var mLen = data.mirrorLength || 1;
+            var cLen = data.cabinetLength || 1;
+            var mDep = data.mirrorDepth || 20;
+            var mHei = data.mirrorHeight || 75;
+            var cDep = data.cabinetDepth || 50;
+            var cHei = data.cabinetHeight || 50;
+            text += '\n材质：' + getMaterialName(data.material)
+                + '\n镜柜：' + mLen + '米 × ' + mDep + 'cm × ' + mHei + 'cm'
+                + '\n主柜：' + cLen + '米 × ' + cDep + 'cm × ' + cHei + 'cm'
+                + '\n\n【费用明细】\n';
+            (data.details || []).forEach(function(item) {
+                text += item.name + '：¥' + item.price.toLocaleString() + '\n';
+            });
+            text += '\n合计：¥' + data.total.toLocaleString()
+                + '\n\n报价日期：' + (data.date || new Date().toLocaleString('zh-CN'));
+            return text;
+        }
+
+        function showQuotePreview() {
+            var data = getFormData();
+            var total = currentDetails.reduce(function(s, i) { return s + i.price; }, 0);
+            var preview = document.getElementById('quotePreview');
+            var html = '<h3>浴室柜报价单</h3><div class="q-header">';
+            if (data.customerName) html += '<p>客户：' + data.customerName + '</p>';
+            if (data.customerPhone) html += '<p>电话：' + data.customerPhone + '</p>';
+            if (data.customerNote) html += '<p>备注：' + data.customerNote + '</p>';
+            html += '<p>日期：' + new Date().toLocaleString('zh-CN') + '</p></div>';
+            html += '<div class="q-row"><span>材质</span><span>' + getMaterialName(data.material) + '</span></div>';
+            html += '<div class="q-row"><span>镜柜</span><span>' + data.mirrorLength + '米 × ' + data.mirrorDepth + 'cm × ' + data.mirrorHeight + 'cm</span></div>';
+            html += '<div class="q-row"><span>主柜</span><span>' + data.cabinetLength + '米 × ' + data.cabinetDepth + 'cm × ' + data.cabinetHeight + 'cm</span></div>';
+            html += '<div style="border-top:1px solid #e2e8f0; margin:10px 0; padding-top:10px;">';
+            currentDetails.forEach(function(item) {
+                html += '<div class="q-row"><span>' + item.name + '</span><span>¥' + item.price.toLocaleString() + '</span></div>';
+            });
+            html += '</div>';
+            html += '<div class="q-row total"><span>合计</span><span>¥' + total.toLocaleString() + '</span></div>';
+            preview.innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById('quoteModal').classList.add('show');
+        }
+
+        function copyQuoteText() {
+            var data = getFormData();
+            var total = currentDetails.reduce(function(s, i) { return s + i.price; }, 0);
+            data.total = total;
+            data.details = currentDetails.slice();
+            data.date = new Date().toLocaleString('zh-CN');
+            var text = generateQuoteText(data);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() { showToast('报价单已复制'); }).catch(function() { fallbackCopy(text); });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function showDetail() {
+            var body = document.getElementById('detailBody');
+            var html = '';
+            currentDetails.forEach(function(item) {
+                html += '<div class="detail-row"><span class="detail-name">' + item.name + '</span><span class="detail-price">¥' + item.price.toLocaleString() + '</span></div>';
+            });
+            var total = currentDetails.reduce(function(s, i) { return s + i.price; }, 0);
+            html += '<div class="detail-row total"><span class="detail-name">合计</span><span class="detail-price">¥' + total.toLocaleString() + '</span></div>';
+            body.innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('show');
+            document.getElementById('detailModal').classList.add('show');
+        }
+
+        function closeAllModals() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('show'); });
+        }
+
+        function resetForm() {
+            if (!confirm('确定重置所有选项？')) return;
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerNote').value = '';
+            document.getElementById('mat-spc').checked = true;
+            document.getElementById('mirrorLength').value = '1';
+            document.getElementById('mirrorDepth').value = '20';
+            document.getElementById('mirrorHeight').value = '75';
+            document.getElementById('cabinetLength').value = '1';
+            document.getElementById('cabinetDepth').value = '50';
+            document.getElementById('cabinetHeight').value = '50';
+            ['lightSlot', 'aluFrameArea', 'smartLensLen', 'paintDoorArea'].forEach(function(id) {
+                document.getElementById(id).value = '0';
+            });
+            document.getElementById('simpleDoorW').value = '0.4';
+            document.getElementById('simpleDoorH').value = '0.7';
+            document.getElementById('simpleDoorSizeGroup').style.display = 'none';
+            ['smartMirror', 'layerLight', 'foldMirror', 'smartLensFrame'].forEach(function(id) {
+                var cb = document.getElementById(id);
+                cb.checked = false;
+                var item = cb.closest('.checkbox-item');
+                if (item) item.classList.remove('active');
+            });
+            document.getElementById('smartOptions').style.display = 'none';
+            Object.keys(quantities).forEach(function(key) {
+                quantities[key] = 0;
+                document.getElementById(key).textContent = '0';
+            });
+            calculate();
+            showToast('已重置');
+        }
+
+        function showToast(msg) {
+            var toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 2000);
+        }
+    </script>
+</body>
+</html>
